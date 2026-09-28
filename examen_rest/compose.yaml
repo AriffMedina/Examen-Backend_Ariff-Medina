@@ -1,0 +1,30 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: mysql+pymysql://laboratorio:laboratorio@mysql:3306/laboratorio
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: laboratorio
+      MYSQL_USER: laboratorio
+      MYSQL_PASSWORD: laboratorio
+      MYSQL_ROOT_PASSWORD: laboratorio
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-plaboratorio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
